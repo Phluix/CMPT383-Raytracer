@@ -1,5 +1,8 @@
 use std::ops::{Add, Sub, Mul, Div, Neg, Index, AddAssign, MulAssign, DivAssign};
 
+use rand::prelude::*;
+use std::f32::consts::PI;
+
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Vec3 {
     e: [f32;3],
@@ -61,6 +64,54 @@ impl Vec3 {
          *self / self.length()
     }
 
+    pub fn random() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        Vec3 {
+            e: [rng.gen(), rng.gen(), rng.gen()],
+        }
+    }
+
+    pub fn random_init(min: f32, max: f32) -> Vec3 {
+        let mut rng = rand::thread_rng();
+        Vec3 {
+            e: [
+                rng.gen_range(min, max),
+                rng.gen_range(min, max),
+                rng.gen_range(min, max),
+            ]
+        }
+    }
+}
+
+pub fn random_in_unit_sphere() -> Vec3 {
+    loop {
+        let p = Vec3::random_init(-1.0, 1.0);
+        if p.length_squared() >= 1.0 { continue; }
+        return p;
+    }
+}
+
+pub fn random_unit_vector() -> Vec3 {
+    let mut rng = rand::thread_rng();
+    let a = rng.gen_range(0.0, 2.0*PI);
+    let z = rng.gen_range(-1.0, 1.0) as f32;
+    let r = (1.0 - z * z).sqrt();
+    Vec3 {
+        e: [
+            r*a.cos(),
+            r*a.sin(),
+            z,
+        ]
+    }
+}
+
+pub fn random_in_hemisphere(normal: &Vec3) -> Vec3 {
+    let in_unit_sphere = random_in_unit_sphere();
+    if  in_unit_sphere.dot(*normal) > 0.0 { // In the same hemisphere as the normal
+        return in_unit_sphere;
+    } else {
+        return -in_unit_sphere;
+    }
 }
 
 impl Neg for Vec3 {
