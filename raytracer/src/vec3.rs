@@ -114,6 +114,10 @@ pub fn random_in_hemisphere(normal: &Vec3) -> Vec3 {
     }
 }
 
+pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+    v - n * v.dot(n) * 2.0
+}
+
 impl Neg for Vec3 {
     type Output = Self;
     fn neg(self) -> Self::Output {

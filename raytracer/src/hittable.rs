@@ -1,12 +1,13 @@
 use crate::ray::Ray;
 use crate::vec3::{Vec3, Point3};
+use crate::material::Material;
 
-#[derive(Default)]
-pub struct HitRecord {
+pub struct HitRecord{
     pub t: f32,
     pub hit_point: Point3,
     pub normal: Vec3,
     pub front_face: bool,
+    pub material: Material,
 }
 
 pub trait Hittable {
