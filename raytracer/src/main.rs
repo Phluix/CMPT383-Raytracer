@@ -5,6 +5,7 @@
 mod vec3;
 mod ray;
 mod color;
+mod hittable;
 
 use ray::Ray;
 use vec3::{Vec3, Point3, Color};
@@ -69,22 +70,28 @@ fn write_ppm(w: i32, h: i32, max: i32) {
     }
 }
 
-fn hit_sphere(sphere_center: Point3, radius: f32, r: &Ray) -> bool {
+fn hit_sphere(sphere_center: Point3, radius: f32, r: &Ray) -> f32 {
     let oc = r.origin() - sphere_center;
-    let a = r.direction().dot(r.direction());
-    let b = 2.0 * oc.dot(r.direction());
-    let c = oc.dot(oc) - radius * radius;
-    let discriminant = b*b - 4.0*a*c;
+    let a = r.direction().length_squared();
+    let half_b = oc.dot(r.direction());
+    let c = oc.length_squared() - radius * radius;
+    let discriminant = half_b*half_b - a*c;
 
-    discriminant > 0.0
+    if discriminant < 0.0 {
+        return -1.0
+    } else {
+        return (-half_b -discriminant.sqrt()) / a
+    }
 }
 
 fn ray_color(r: &Ray) -> Color {
-    if (hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, r)) {
-        return Color::new(1.0, 0.0, 0.0)
+    let h = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, r);
+    if h > 0.0 {
+        let n = r.at(h) - Vec3::new(0.0, 0.0, -1.0);
+        let u_n = n.unit_vector();
+        return Color::new(u_n.x()+1.0, u_n.y()+1.0, u_n.z()+1.0) * 0.5
     }
     let unit_direction = r.direction().unit_vector();
-    // println!("{}", unit_direction.y());
     let t = 0.5 * (unit_direction.y() + 1.0);
     // linear blend: blendedValue = (1-t) * startValue + t * endValue
     Color::new(1.0, 1.0, 1.0) * (1.0-t) + Color::new(0.5, 0.7, 1.0) * t
