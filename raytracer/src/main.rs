@@ -22,7 +22,7 @@ use material::{Material, Lambertian, Metal, scatter};
 use rand::prelude::*;
 
 const ASPECT_RATIO: f32 = 16.0 / 9.0;
-const IMAGE_WIDTH: i32 = 1920;
+const IMAGE_WIDTH: i32 = 400;
 const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
 const MAX_VALUE: i32 = 255;
 const INFINITY: f32 = f32::INFINITY;
@@ -35,8 +35,8 @@ fn main() {
     let mut world = HittableList { objects: Vec::new() };
 
     let material_ground =  Color::new(0.3, 0.3, 0.3);
-    let material_center =  Color::new(0.5, 0.0, 0.0);
-    let material_left = Color::new(0.8, 0.8, 0.8);
+    let material_center =  Color::new(0.1, 0.2, 0.5);
+    // let material_left = Color::new(0.8, 0.8, 0.8);
     let material_right = Color::new(0.8, 0.6, 0.2);
 
     world.add(Box::new(Sphere {
@@ -52,12 +52,17 @@ fn main() {
     world.add(Box::new(Sphere {
         center: Point3::new(-1.0, 0.0, -1.0),
         radius: 0.5,
-        material: Material::Metal{ albedo: material_left },
+        material: Material::Dielectric{ ref_idx: 1.5 },
+    }));
+    world.add(Box::new(Sphere {
+        center: Point3::new(-1.0, 0.0, -1.0),
+        radius: -0.4,
+        material: Material::Dielectric{ ref_idx: 1.5 },
     }));
     world.add(Box::new(Sphere {
         center: Point3::new(1.0, 0.0, -1.0),
         radius: 0.5,
-        material: Material::Metal{ albedo: material_right },
+        material: Material::Metal{ albedo: material_right, fuzz: 1.0 },
     }));
 
 
