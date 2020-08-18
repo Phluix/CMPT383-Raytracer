@@ -1,7 +1,7 @@
 use crate::vec3::Color;
 use crate::ray::Ray;
 
-pub fn write_color(pixel_color: Color, samples_per_pixel: i32) {
+pub fn write_color(pixel_color: Color, samples_per_pixel: i32, output: &mut String) {
     // Write the translated [0,255] value of each color component
     // let r = (255.999 * pixel_color.r()) as i32;
     // let g = (255.999 * pixel_color.g()) as i32;
@@ -19,10 +19,18 @@ pub fn write_color(pixel_color: Color, samples_per_pixel: i32) {
     
     
 
-    println!("{} {} {}",
+    // println!("{} {} {}",
+    //     (256.0 * clamp(r, 0.0, 0.999)) as i32,
+    //     (256.0 * clamp(g, 0.0, 0.999)) as i32, 
+    //     (256.0 * clamp(b, 0.0, 0.999)) as i32);
+
+    *output = format!("{}\n{} {} {}", output,
         (256.0 * clamp(r, 0.0, 0.999)) as i32,
-        (256.0 * clamp(g, 0.0, 0.999)) as i32, 
-        (256.0 * clamp(b, 0.0, 0.999)) as i32);
+        (256.0 * clamp(g, 0.0, 0.999)) as i32,
+        (256.0 * clamp(b, 0.0, 0.999)) as i32,
+    );
+
+    
 }
 
 pub fn ray_color(r: &Ray) -> Color {
